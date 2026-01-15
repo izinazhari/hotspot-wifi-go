@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="expires" content="-1" />
+    <title>Captive Portal - Log in</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#008a94",
+                        "background-light": "#f9fbfb",
+                        "background-dark": "#182a2b",
+                        "accent-gold": "#E0C097"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100dvh;
+        }
+        .ios-shadow {
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-[#0c1b1d] dark:text-[#f8fcfc] transition-colors duration-300">
+
+    <!-- MikroTik CHAP Logic -->
+    $(if chap-id)
+    <form name="sendin" action="$(link-login-only)" method="post" style="display:none">
+        <input type="hidden" name="username" />
+        <input type="hidden" name="password" />
+        <input type="hidden" name="dst" value="$(link-orig)" />
+        <input type="hidden" name="popup" value="true" />
+    </form>
+    <script src="/md5.js"></script>
+    <script>
+        function doLogin() {
+            document.sendin.username.value = document.login.username.value;
+            // Password is same as username for Voucher login
+            document.sendin.password.value = hexMD5('$(chap-id)' + document.login.username.value + '$(chap-challenge)');
+            document.sendin.submit();
+            return false;
+        }
+    </script>
+    $(endif)
+
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+        <header class="flex items-center bg-transparent p-6 justify-between pt-12">
+            <div class="flex items-center gap-3">
+                <div class="bg-primary/10 p-2 rounded-xl">
+                    <i class="fa-solid fa-wifi text-primary text-2xl"></i>
+                </div>
+                <h1 class="text-lg font-bold tracking-tight uppercase">WIFI<span class="text-primary">GO</span></h1>
+            </div>
+            <div class="flex items-center text-primary/60">
+                <i class="fa-solid fa-signal text-xl"></i>
+            </div>
+        </header>
+
+        <div class="px-6 py-4">
+            <h2 class="text-[28px] font-bold leading-tight tracking-tight text-[#0c1b1d] dark:text-white">
+                Internet Siswa dan Rakyat
+            </h2>
+            <p class="text-[#459ba1] dark:text-primary/70 text-sm mt-1">Internet cepat dalam genggaman Anda.</p>
+
+            <!-- Error Message -->
+            $(if error)
+            <div class="mt-4 p-4 bg-red-100 border border-red-200 text-red-700 rounded-lg text-sm">
+                $(error)
+            </div>
+            $(endif)
+        </div>
+
+        <div class="px-6 py-4">
+            <div
+                class="bg-white dark:bg-[#1f3536] rounded-xl p-6 ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
+
+                <!-- Login Form wrapped in standard design container -->
+                <form name="login" action="$(link-login-only)" method="post" $(if chap-id) onSubmit="return doLogin()"
+                    $(endif)>
+                    <input type="hidden" name="dst" value="$(link-orig)" />
+                    <input type="hidden" name="popup" value="true" />
+                    <input type="hidden" name="password" />
+
+                    <div class="flex flex-col gap-5">
+                        <div class="flex flex-col gap-2">
+                            <label
+                                class="text-xs font-semibold uppercase tracking-widest text-[#0c1b1d]/50 dark:text-white/50">MASUKKAN
+                                KODE VOUCHER</label>
+                            <input name="username" value="$(username)"
+                                onchange="document.login.password.value=this.value; if(this.value=='') return; document.login.submit();"
+                                oninput="document.login.password.value=this.value"
+                                class="form-input w-full rounded-lg border border-[#e2e8e8] dark:border-[#355254] bg-[#fcfdfd] dark:bg-[#1a2f30] h-14 px-4 text-lg font-medium tracking-[0.2em] placeholder:tracking-normal placeholder:text-gray-300 focus:border-primary focus:ring-0"
+                                placeholder="XXXX-XXXX-XXXX" type="text" />
+                        </div>
+
+                        <button type="submit"
+                            class="flex w-full items-center justify-center rounded-lg h-14 bg-primary text-white text-base font-bold tracking-wide active:scale-[0.98] transition-transform">
+                            Hubungkan Sekarang
+                        </button>
+
+                        <p class="text-[11px] text-center text-gray-400 dark:text-gray-500">
+                            Dengan menghubungkan, Anda menyetujui Ketentuan Layanan kami.
+                        </p>
+
+                        $(if trial == 'yes')
+                        <div class="text-center mt-2">
+                            <p class="text-sm text-gray-500">
+                                Tersedia GRATIS Coba,
+                                <a href="$(link-login-only)?dst=$(link-orig-esc)&amp;username=T-$(mac-esc)"
+                                    class="font-bold text-primary hover:underline">
+                                    Klik di sini
+                                </a>
+                            </p>
+                        </div>
+                        $(endif)
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <div class="px-6 mt-6">
+            <h3 class="text-sm font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4 px-1">PAKET
+                AKSES</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <div
+                    class="bg-white dark:bg-[#1f3536] p-4 rounded-xl ios-shadow border border-[#f0f4f4] dark:border-[#2a4547] flex flex-col gap-1">
+                    <span class="text-xs font-bold text-primary">Paling Laris!</span>
+                    <p class="text-lg font-bold dark:text-white">1 Hari</p>
+                    <div class="flex items-center justify-between mt-2">
+                        <p class="text-sm font-medium text-gray-500">Rp 2.000</p>
+                        <i class="fa-solid fa-chevron-right text-sm text-gray-300"></i>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-[#1f3536] p-4 rounded-xl ios-shadow border-2 border-primary/20 flex flex-col gap-1 relative overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 bg-accent-gold text-[10px] font-bold px-2 py-1 rounded-bl-lg text-white">
+                        POPULER</div>
+                    <span class="text-xs font-bold text-primary">Paling Aman!</span>
+                    <p class="text-lg font-bold dark:text-white">3 Hari</p>
+                    <div class="flex items-center justify-between mt-2">
+                        <p class="text-sm font-medium text-gray-500">Rp 5.000</p>
+                        <i class="fa-solid fa-chevron-right text-sm text-primary"></i>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-[#1f3536] p-4 rounded-xl ios-shadow border border-[#f0f4f4] dark:border-[#2a4547] flex flex-col gap-1">
+                    <span class="text-xs font-bold text-primary">Paling Sultan!</span>
+                    <p class="text-lg font-bold dark:text-white">7 Hari</p>
+                    <div class="flex items-center justify-between mt-2">
+                        <p class="text-sm font-medium text-gray-500">Rp 10.000</p>
+                        <i class="fa-solid fa-chevron-right text-sm text-gray-300"></i>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-[#1f3536] p-4 rounded-xl ios-shadow border border-[#f0f4f4] dark:border-[#2a4547] flex flex-col gap-1">
+                    <span class="text-xs font-bold text-primary">Paling Super Sultan!</span>
+                    <p class="text-lg font-bold dark:text-white">30 Hari</p>
+                    <div class="flex items-center justify-between mt-2">
+                        <p class="text-sm font-medium text-gray-500">Rp 15.000</p>
+                        <i class="fa-solid fa-chevron-right text-sm text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="px-6 mt-10">
+            <h3 class="text-sm font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-6 px-1">Mengapa
+                Memilih WIFIGO?</h3>
+            <div class="space-y-6">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="size-10 shrink-0 flex items-center justify-center rounded-full bg-white dark:bg-[#1f3536] ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
+                        <i class="fa-solid fa-gauge-high text-primary"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold">Kecepatan UPTO 200Mbps</h4>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Dioptimalkan untuk aktivitas bandwidth
+                            tinggi.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div
+                        class="size-10 shrink-0 flex items-center justify-center rounded-full bg-white dark:bg-[#1f3536] ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
+                        <i class="fa-solid fa-shield-halved text-primary"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold">Koneksi Paling Aman!</h4>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Kami sangat menghargai privasi Anda.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div
+                        class="size-10 shrink-0 flex items-center justify-center rounded-full bg-white dark:bg-[#1f3536] ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
+                        <i class="fa-solid fa-clock text-primary"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold">Keandalan 24/7</h4>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Akses tanpa gangguan kapan pun Anda
+                            butuhkan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="px-6 mt-10">
+            <div
+                class="bg-primary/5 dark:bg-white/5 rounded-2xl p-6 border border-dashed border-primary/20 dark:border-white/10">
+                <h3 class="text-sm font-bold mb-4 text-[#0c1b1d] dark:text-white">Cara Memulai</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-3">
+                        <div
+                            class="size-6 shrink-0 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold">
+                            1</div>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Beli voucher dari Mitra WIFIGO.</p>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div
+                            class="size-6 shrink-0 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold">
+                            2</div>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Masukkan kode unik 6 digit Anda ke kolom di
+                            atas.</p>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div
+                            class="size-6 shrink-0 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold">
+                            3</div>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Tekan "Hubungkan Sekarang" dan nikmati
+                            Internet tanpa batas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="px-6 mt-10 mb-8">
+            <div
+                class="bg-white dark:bg-[#1f3536] rounded-xl p-6 ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-circle-question text-primary text-lg"></i>
+                    <h3 class="text-sm font-bold">Butuh Bantuan?</h3>
+                </div>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-phone text-gray-400 text-lg"></i>
+                        <a class="text-sm font-medium text-primary" href="tel:+628001234567">+62 (800) 123-4567</a>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-envelope text-gray-400 text-lg"></i>
+                        <a class="text-sm font-medium text-primary" href="#">cs@sid.net.id</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="mt-auto px-6 py-8 border-t border-gray-100 dark:border-gray-800 text-center">
+            <div class="flex justify-center gap-6 mb-4">
+                <a class="text-xs text-gray-400 font-medium" href="#">Bantuan</a>
+                <a class="text-xs text-gray-400 font-medium" href="#">Keamanan</a>
+                <a class="text-xs text-gray-400 font-medium" href="#">Privasi</a>
+            </div>
+            <p class="text-[10px] text-gray-300 uppercase tracking-widest">© 2026 SidNet Internet</p>
+            <div class="h-6"></div>
+        </footer>
+    </div>
+
+</body>
+
+</html>
