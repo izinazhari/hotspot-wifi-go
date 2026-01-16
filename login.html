@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&amp;display=swap"
         rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -35,25 +36,41 @@
             },
         }
     </script>
-    <style type="text/tailwindcss">
-        body {
-            font-family: 'Manrope', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            min-height: 100dvh;
-        }
-        .ios-shadow {
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-        }
-    </style>
-    <style>
-        body {
-            min-height: max(884px, 100dvh);
-        }
-    </style>
 </head>
 
 <body
     class="bg-background-light dark:bg-background-dark font-display text-[#0c1b1d] dark:text-[#f8fcfc] transition-colors duration-300">
+
+    <script>
+        // Initialize theme on page load
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+            
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Initialize on page load
+        initTheme();
+    </script>
 
     <!-- MikroTik CHAP Logic -->
     $(if chap-id)
@@ -83,12 +100,19 @@
                 </div>
                 <h1 class="text-lg font-bold tracking-tight uppercase">WIFI<span class="text-primary">GO</span></h1>
             </div>
-            <div class="flex items-center text-primary/60">
-                <i class="fa-solid fa-signal text-xl"></i>
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                    onclick="toggleTheme()">
+                    <i class="fa-solid fa-sun text-xl dark:hidden"></i>
+                    <i class="fa-solid fa-moon text-xl hidden dark:inline-block"></i>
+                </button>
+                <div class="flex items-center text-primary/60">
+                    <i class="fa-solid fa-signal text-xl"></i>
+                </div>
             </div>
         </header>
 
-        <div class="px-6 py-4">
+        <div class="px-6 py-4 text-center">
             <h2 class="text-[28px] font-bold leading-tight tracking-tight text-[#0c1b1d] dark:text-white">
                 Internet Siswa dan Rakyat
             </h2>
@@ -102,58 +126,64 @@
             $(endif)
         </div>
 
+        <!-- Main Layout Container for Desktop -->
         <div class="px-6 py-4">
-            <div
-                class="bg-white dark:bg-[#1f3536] rounded-xl p-6 ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <!-- Left Column: Form (takes 1 column on desktop) -->
+                <div class="lg:col-span-1">
+                    <div
+                        class="bg-white dark:bg-[#1f3536] rounded-xl p-6 ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
 
-                <!-- Login Form wrapped in standard design container -->
-                <form name="login" action="$(link-login-only)" method="post" $(if chap-id) onSubmit="return doLogin()"
-                    $(endif)>
-                    <input type="hidden" name="dst" value="$(link-orig)" />
-                    <input type="hidden" name="popup" value="true" />
-                    <input type="hidden" name="password" />
+                        <!-- Login Form wrapped in standard design container -->
+                        <form name="login" action="$(link-login-only)" method="post" $(if chap-id) onSubmit="return doLogin()"
+                            $(endif)>
+                            <input type="hidden" name="dst" value="$(link-orig)" />
+                            <input type="hidden" name="popup" value="true" />
+                            <input type="hidden" name="password" />
 
-                    <div class="flex flex-col gap-5">
-                        <div class="flex flex-col gap-2">
-                            <label
-                                class="text-xs font-semibold uppercase tracking-widest text-[#0c1b1d]/50 dark:text-white/50">MASUKKAN
-                                KODE VOUCHER</label>
-                            <input name="username" value="$(username)"
-                                onchange="document.login.password.value=this.value; if(this.value=='') return; document.login.submit();"
-                                oninput="document.login.password.value=this.value"
-                                class="form-input w-full rounded-lg border border-[#e2e8e8] dark:border-[#355254] bg-[#fcfdfd] dark:bg-[#1a2f30] h-14 px-4 text-lg font-medium tracking-[0.2em] placeholder:tracking-normal placeholder:text-gray-300 focus:border-primary focus:ring-0"
-                                placeholder="XXXX-XXXX-XXXX" type="text" />
-                        </div>
+                            <div class="flex flex-col gap-5">
+                                <div class="flex flex-col gap-2">
+                                    <label
+                                        class="text-xs font-semibold uppercase tracking-widest text-[#0c1b1d]/50 dark:text-white/50">MASUKKAN
+                                        KODE VOUCHER</label>
+                                    <input name="username" value="$(username)"
+                                        onchange="document.login.password.value=this.value; if(this.value=='') return; document.login.submit();"
+                                        oninput="document.login.password.value=this.value"
+                                        class="form-input w-full rounded-lg border border-[#e2e8e8] dark:border-[#355254] bg-[#fcfdfd] dark:bg-[#1a2f30] h-14 px-4 text-lg font-medium tracking-[0.2em] placeholder:tracking-normal placeholder:text-gray-300 focus:border-primary focus:ring-0"
+                                        placeholder="XXXX-XXXX-XXXX" type="text" />
+                                </div>
 
-                        <button type="submit"
-                            class="flex w-full items-center justify-center rounded-lg h-14 bg-primary text-white text-base font-bold tracking-wide active:scale-[0.98] transition-transform">
-                            Hubungkan Sekarang
-                        </button>
+                                <button type="submit"
+                                    class="flex w-full items-center justify-center rounded-lg h-14 bg-primary text-white text-base font-bold tracking-wide active:scale-[0.98] transition-transform">
+                                    Hubungkan Sekarang
+                                </button>
 
-                        <p class="text-[11px] text-center text-gray-400 dark:text-gray-500">
-                            Dengan menghubungkan, Anda menyetujui Ketentuan Layanan kami.
-                        </p>
+                                <p class="text-[11px] text-center text-gray-400 dark:text-gray-500">
+                                    Dengan menghubungkan, Anda menyetujui Ketentuan Layanan kami.
+                                </p>
 
-                        $(if trial == 'yes')
-                        <div class="text-center mt-2">
-                            <p class="text-sm text-gray-500">
-                                Tersedia GRATIS Coba,
-                                <a href="$(link-login-only)?dst=$(link-orig-esc)&amp;username=T-$(mac-esc)"
-                                    class="font-bold text-primary hover:underline">
-                                    Klik di sini
-                                </a>
-                            </p>
-                        </div>
-                        $(endif)
+                                $(if trial == 'yes')
+                                <div class="text-center mt-2">
+                                    <p class="text-sm text-gray-500">
+                                        Tersedia GRATIS Coba,
+                                        <a href="$(link-login-only)?dst=$(link-orig-esc)&amp;username=T-$(mac-esc)"
+                                            class="font-bold text-primary hover:underline">
+                                            Klik di sini
+                                        </a>
+                                    </p>
+                                </div>
+                                $(endif)
+                            </div>
+                        </form>
+
                     </div>
-                </form>
+                </div>
 
-            </div>
-        </div>
-
-        <div class="px-6 mt-6">
-            <h3 class="text-sm font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4 px-1">HARGA PAKET</h3>
-            <div class="grid grid-cols-2 gap-3">
+                <!-- Right Column: Price List (takes 2 columns on desktop) -->
+                <div class="lg:col-span-2">
+                    <div>
+                        <h3 class="text-sm font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4 px-1">HARGA PAKET</h3>
+                        <div class="grid grid-cols-2 lg:grid-cols-2 gap-3">
                 <div
                     class="bg-white dark:bg-[#1f3536] p-4 rounded-xl ios-shadow border border-[#f0f4f4] dark:border-[#2a4547] flex flex-col gap-1">
                     <span class="text-xs font-bold text-primary">Paling Laris!</span>
@@ -193,90 +223,103 @@
                         <i class="fa-solid fa-chevron-right text-sm text-gray-300"></i>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="px-6 mt-10">
-            <h3 class="text-sm font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-6 px-1">Mengapa
-                Memilih WIFIGO?</h3>
-            <div class="space-y-6">
-                <div class="flex items-center gap-4">
-                    <div
-                        class="size-10 shrink-0 flex items-center justify-center rounded-full bg-white dark:bg-[#1f3536] ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
-                        <i class="fa-solid fa-gauge-high text-primary"></i>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-bold">Kecepatan UPTO 200Mbps</h4>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Dioptimalkan untuk aktivitas bandwidth
-                            tinggi.</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div
-                        class="size-10 shrink-0 flex items-center justify-center rounded-full bg-white dark:bg-[#1f3536] ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
-                        <i class="fa-solid fa-shield-halved text-primary"></i>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-bold">Koneksi Paling Aman!</h4>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Kami sangat menghargai privasi Anda.
-                        </p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div
-                        class="size-10 shrink-0 flex items-center justify-center rounded-full bg-white dark:bg-[#1f3536] ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
-                        <i class="fa-solid fa-clock text-primary"></i>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-bold">Keandalan 24/7</h4>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Akses tanpa gangguan kapan pun Anda
-                            butuhkan.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="px-6 mt-10">
-            <div
-                class="bg-primary/5 dark:bg-white/5 rounded-2xl p-6 border border-dashed border-primary/20 dark:border-white/10">
-                <h3 class="text-sm font-bold mb-4 text-[#0c1b1d] dark:text-white">Cara Memulai</h3>
-                <div class="space-y-4">
-                    <div class="flex items-start gap-3">
-                        <div
-                            class="size-6 shrink-0 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold">
-                            1</div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Beli voucher dari Mitra WIFIGO.</p>
+
+        <div class="px-6 py-4">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <!-- Left Column: Why Choose -->
+                <div class="lg:col-span-1">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-6 px-1">Mengapa
+                        Memilih WIFIGO?</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="size-10 shrink-0 flex items-center justify-center rounded-full bg-white dark:bg-[#1f3536] ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
+                                <i class="fa-solid fa-gauge-high text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold">Kecepatan UPTO 200Mbps</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Dioptimalkan untuk aktivitas bandwidth
+                                    tinggi.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="size-10 shrink-0 flex items-center justify-center rounded-full bg-white dark:bg-[#1f3536] ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
+                                <i class="fa-solid fa-shield-halved text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold">Koneksi Paling Aman!</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Kami sangat menghargai privasi Anda.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="size-10 shrink-0 flex items-center justify-center rounded-full bg-white dark:bg-[#1f3536] ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
+                                <i class="fa-solid fa-clock text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold">Keandalan 24/7</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Akses tanpa gangguan kapan pun Anda
+                                    butuhkan.</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex items-start gap-3">
-                        <div
-                            class="size-6 shrink-0 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold">
-                            2</div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Masukkan kode unik 6 digit Anda ke kolom di
-                            atas.</p>
-                    </div>
-                    <div class="flex items-start gap-3">
-                        <div
-                            class="size-6 shrink-0 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold">
-                            3</div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Tekan "Hubungkan Sekarang" dan nikmati
-                            Internet tanpa batas.</p>
+                </div>
+
+                <!-- Right Column: Getting Started -->
+                <div class="lg:col-span-2">
+                    <div
+                        class="bg-primary/5 dark:bg-white/5 rounded-2xl p-6 border border-dashed border-primary/20 dark:border-white/10">
+                        <h3 class="text-sm font-bold mb-4 text-[#0c1b1d] dark:text-white">Cara Memulai</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <div
+                                    class="size-6 shrink-0 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold">
+                                    1</div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Beli voucher dari Mitra WIFIGO.</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div
+                                    class="size-6 shrink-0 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold">
+                                    2</div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Masukkan kode unik 6 digit Anda ke kolom di
+                                    atas.</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div
+                                    class="size-6 shrink-0 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold">
+                                    3</div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Tekan "Hubungkan Sekarang" dan nikmati
+                                    Internet tanpa batas.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="px-6 mt-10 mb-8">
-            <div
-                class="bg-white dark:bg-[#1f3536] rounded-xl p-6 ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
-                <div class="flex items-center gap-2 mb-4">
-                    <i class="fa-solid fa-circle-question text-primary text-lg"></i>
-                    <h3 class="text-sm font-bold">Butuh Bantuan?</h3>
-                </div>
-                <div class="space-y-3 mb-6">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-phone text-gray-400 text-lg"></i>
-                        <a class="text-sm font-medium text-primary" href="tel:+628001234567">+62 (800) 123-4567</a>
+            <div class="max-w-2xl mx-auto">
+                <div
+                    class="bg-white dark:bg-[#1f3536] rounded-xl p-6 ios-shadow border border-[#f0f4f4] dark:border-[#2a4547]">
+                    <div class="flex items-center justify-center gap-2 mb-4">
+                        <i class="fa-solid fa-circle-question text-primary text-lg"></i>
+                        <h3 class="text-sm font-bold">Butuh Bantuan?</h3>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-envelope text-gray-400 text-lg"></i>
-                        <a class="text-sm font-medium text-primary" href="#">cs@sid.net.id</a>
+                    <div class="space-y-3 mb-6 text-center">
+                        <div class="flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-phone text-gray-400 text-lg"></i>
+                            <a class="text-sm font-medium text-primary" href="tel:+628001234567">+62 (800) 123-4567</a>
+                        </div>
+                        <div class="flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-envelope text-gray-400 text-lg"></i>
+                            <a class="text-sm font-medium text-primary" href="#">cs@sid.net.id</a>
+                        </div>
                     </div>
                 </div>
             </div>

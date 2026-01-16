@@ -1,0 +1,145 @@
+/* Main Styles */
+body {
+    font-family: 'Manrope', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: max(884px, 100dvh);
+}
+
+html {
+    color-scheme: light dark;
+}
+
+/* iOS Shadow Effect */
+.ios-shadow {
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Smooth Transitions */
+* {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}
+
+/* Remove default margins and paddings */
+a,
+body,
+div,
+form,
+html,
+img,
+input,
+label,
+p,
+span {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+/* Input and Label Base Styles */
+input,
+label {
+    vertical-align: middle;
+    white-space: normal;
+    background: 0 0;
+    line-height: 1;
+}
+
+input {
+    outline: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+input:focus {
+    outline: 0;
+}
+
+/* Form Styling */
+form {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Button Base Styles */
+button {
+    outline: 0;
+    border: none;
+    cursor: pointer;
+}
+
+button:focus {
+    outline: 0;
+}
+
+/* Responsive Grid */
+@media (min-width: 1024px) {
+    .grid-desktop {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 1023px) {
+    .grid-desktop {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+/* Fade In Animation */
+@-webkit-keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fadeIn {
+    -webkit-animation-name: fadeIn;
+    animation-name: fadeIn;
+}
+
+.animated {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+/* Utilities */
+.box-sizing-border {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/* Scroll Behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Selection Color */
+::selection {
+    background-color: #008a94;
+    color: white;
+}
+
+::-moz-selection {
+    background-color: #008a94;
+    color: white;
+}
