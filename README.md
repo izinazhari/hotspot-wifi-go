@@ -125,16 +125,6 @@ Pull request sangat dipersilakan 🙌
 
 ---
 
-## 📸 Preview
-
-> Tambahkan screenshot tampilan landing page di sini
-
-```
-![Preview](preview.png)
-```
-
----
-
 ## ❤️ Terima Kasih
 
 Terima kasih sudah mampir ke repository ini.
