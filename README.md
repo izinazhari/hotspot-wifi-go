@@ -52,21 +52,6 @@ Jika kamu menemukan kekurangan:
 
 ---
 
-## 📂 Struktur File (Contoh)
-
-```
-📁 mikrotik-landing-page
-│
-├── index.html
-├── style.css
-├── script.js
-├── images/
-│   └── logo.png
-└── README.md
-```
-
----
-
 ## 🚀 Cara Menggunakan
 
 1. Download atau clone repository ini
